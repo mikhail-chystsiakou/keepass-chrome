@@ -1,24 +1,29 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function() {
-  console.log("background script loaded 1");
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
-  });
+  console.log("background script loaded");
 });
 
 chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
-    if (msg.action == "saveLogin") {
+    if (msg.action == "saveCredentials") {
       sendResponse("ok from background");
-      console.log("got login: " + msg.login + ", password: " + msg.password);
-      console.log("sending login send request to localhost:8087...");
-
-
+      console.log("sending login save request to localhost:9000/" + msg.domain);
+      var req = {
+        type: "password",
+        domain: msg.domain,
+        username: msg.login,
+        password: msg.password
+      };
+      console.log("sending message: " + JSON.stringify(req));
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'http://localhost:8087', false);
-      xhr.send();
-      if (xhr.status != 200) {
+      if (req.domain) {
+        xhr.open('PUT', 'http://localhost:9000/' + req.domain, false);
+      } else {
+        xhr.open('PUT', 'http://localhost:9000/', false);
+      }
+      xhr.send(JSON.stringify(req));
+      if (xhr.status != 204) {
         console.log( xhr.status + ': ' + xhr.statusText ); 
       } else {
         console.log( xhr.responseText ); 
@@ -29,12 +34,16 @@ chrome.runtime.onMessage.addListener(
 
 chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
-    if (msg.action == "loadLogin") {
-      console.log("sending login retrieve request to localhost:8086...");
+    if (msg.action == "loadCredentials") {
+      console.log("sending login retrieve request to localhost:9000/" + msg.domain);
 
 
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'http://localhost:8086', false);
+      if (msg.domain) {
+        xhr.open('GET', 'http://localhost:9000/' + msg.domain, false);
+      } else {
+        xhr.open('GET', 'http://localhost:9000/', false);
+      }
       xhr.send();
       if (xhr.status != 200) {
         console.log(xhr.status + ': ' + xhr.statusText ); 
@@ -42,7 +51,7 @@ chrome.runtime.onMessage.addListener(
       } else {
         console.log( xhr.responseText ); 
         var serverResponse = JSON.parse(xhr.responseText);
-        msg.login = serverResponse.login;
+        msg.login = serverResponse.username;
         msg.password = serverResponse.password;
         sendResponse(msg);
       }
