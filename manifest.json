@@ -1,0 +1,25 @@
+{
+    "name": "PassKeeper",
+    "version": "1.0",
+    "description": "Netcracker PassKeeper",
+    "manifest_version": 2,
+    "permissions": [
+        "storage", 
+        "activeTab",
+        "http://localhost/*"
+    ],
+    "background": {
+        "scripts": ["background/background.js"],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_popup": "popup/edit_login.html",
+        "default_icon": {
+            "16": "img/get_started16.png",
+            "32": "img/get_started32.png",
+            "48": "img/get_started48.png",
+            "128": "img/get_started128.png"
+        }
+    },
+    "options_page": "options/options.html"
+  }
