@@ -1,34 +1,18 @@
 'use strict';
 
-// chrome.runtime.onInstalled.addListener(function() {
-//   console.log("background script loaded");
-//   hello();
-//   chrome.tabs.executeScript({
-//     code: 'document.body.style.backgroundColor="orange"'
-//   });
-// });
+chrome.storage.sync.clear(function() {
+  var error = chrome.runtime.lastError;
+  if (error) {
+      console.error(error);
+  } else {
+    console.log("data cleared");
+  }
+});
 
-
-
-// chrome.webNavigation.onCommitted.addListener(function(e) {
-//   chrome.storage.sync.get(function(storage) {
-//     // if (storage.ask_login && storage.ask_password) {
-//         console.log("Need to ask confirmation");
-//         chrome.storage.sync.set({
-//             ask_login: null,
-//             ask_password: null
-//         });
-//         chrome.tabs.executeScript({
-//           file: "content-scripts/save_confirmation.js"
-//         });
-//     // } else {
-//     //     console.log("No need to ask");
-//     // }
-// });
-// });
-
-var backend_server = "http://85.143.11.137:9000";
-var secrets_endpoint = backend_server + "/secrets/";
+var backend_server = "http://127.0.0.1:9000";
+// var backend_server = "http://85.143.11.137:9000";
+var secrets_endpoint = backend_server + "/";
+// var secrets_endpoint = backend_server + "/secrets/";
 
 chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
@@ -66,7 +50,7 @@ chrome.runtime.onMessage.addListener(
         if (msg.action != "load_credentials") {
             return;
         }
-        console.log("sending login load request to " + backend_server + "/secrets" + msg.domain);
+        console.log("sending login load request to " + secrets_endpoint  + msg.domain);
         // var xhr = new XMLHttpRequest();
         // if (msg.domain) {
         //     xhr.open('GET', 'http://localhost:9000/' + msg.domain, true);

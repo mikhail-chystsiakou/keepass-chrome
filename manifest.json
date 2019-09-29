@@ -12,13 +12,13 @@
         "http://85.143.11.137/*"
     ],
     "background": {
-        "scripts": ["common/common.js", "background/background.js"],
+        "scripts": ["background/background.js"],
         "persistent": false
     },
     "content_scripts": [
         {
             "matches": ["https://*/*", "http://*/*"],
-            "js": ["common/common.js", "content-scripts/detect_forms.js"]
+            "js": ["content-scripts/detect_forms.js"]
         }
     ],
     "browser_action": {
