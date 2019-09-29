@@ -14,6 +14,7 @@ function setupExtractLoginBtnHandler() {
   let extractLoginBtn = document.getElementById('extractLoginBtn');
   extractLoginBtn.addEventListener("click", function(e) {
     console.log("extractLoginBtn clicked");
+    chrome.management.launchApp("iaccejeoiakoolecmafhgpmlelblkdci");
     chrome.tabs.executeScript({
       file: 'content-scripts/extract_login.js'
     });

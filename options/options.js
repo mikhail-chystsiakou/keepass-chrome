@@ -13,3 +13,8 @@ function constructOptions(kButtonColors) {
   }
 }
 constructOptions(kButtonColors);
+
+function validate() {
+  var element = document.getElementById('');
+  element.value = element.value.replace(/[^a-zA-Z0-9@]+/, '');
+};

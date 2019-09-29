@@ -1,0 +1,68 @@
+<style>
+    .popup {
+        /* background-color: rgba(0, 0, 255, 0.15); */
+        background-color: rgb(212, 212, 255);
+        border-color: rgb(95, 95, 255);
+        position: absolute;
+        top: 20px;
+        right: -350px;
+        transition: right .5s;
+        border-radius: 10px;
+        width: 350px;
+        padding: 15px;
+        text-align: right;
+        z-index: 99999999;
+    }
+    .popup__message {
+        text-align: right;
+    }
+    .popup__yes {
+        background-color: rgba(0, 150, 0, 0.8);
+        padding: 3px 15px 3px 15px;
+        border-radius: 5px;
+        margin-right: 10px;
+        color: white;
+    }
+    .popup__yes:hover {
+        background-color: rgba(0, 150, 0, 1);
+        cursor: pointer;
+    }
+    .popup__yes:active {
+        position: relative;
+        top: 1px;
+        left: 1px;
+    }
+    .popup__no {
+        background-color: rgba(150, 0, 0, 0.8);
+        padding: 3px 15px 3px 15px;
+        border-radius: 5px;
+        color: white;
+    }
+    .popup__no:hover {
+        background-color: rgba(150, 0, 0, 1);
+        cursor: pointer;
+    }
+    .popup__no:active {
+        position: relative;
+        top: 1px;
+        left: 1px;
+    }
+</style>
+<div id='confirmationPopup' class='popup'>
+    <div style='popup__message'>
+            Password changed, do you want to update it now?
+    </div>
+<br/>
+    <span class='popup__yes'>Yes</span>
+    <span class='popup__no'>No</span>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var popup = document.getElementById("confirmationPopup");
+        console.log("popup: " + popup);
+        with (popup.style) {
+            right = "20px";
+        }
+    });
+</script>

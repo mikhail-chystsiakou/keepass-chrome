@@ -8,3 +8,5 @@ chrome.storage.sync.get(function(loginData) {
     document.getElementsByName("password")[0].value = loginData.password;
     console.log("document.getElementsByName(\"username\")[0].value: " + document.getElementsByName("username")[0].value);
 });
+
+// <img id="icon" width="32" src="/home/mich/js/pass/img/key.svg"/>

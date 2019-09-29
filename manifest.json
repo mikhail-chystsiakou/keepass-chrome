@@ -6,19 +6,28 @@
     "permissions": [
         "storage", 
         "activeTab",
-        "http://localhost/*"
+        "management",
+        "webNavigation",
+        "http://localhost/*",
+        "http://85.143.11.137/*"
     ],
     "background": {
-        "scripts": ["background/background.js"],
+        "scripts": ["common/common.js", "background/background.js"],
         "persistent": false
     },
+    "content_scripts": [
+        {
+            "matches": ["https://*/*", "http://*/*"],
+            "js": ["common/common.js", "content-scripts/detect_forms.js"]
+        }
+    ],
     "browser_action": {
         "default_popup": "popup/edit_login.html",
         "default_icon": {
-            "16": "img/get_started16.png",
-            "32": "img/get_started32.png",
-            "48": "img/get_started48.png",
-            "128": "img/get_started128.png"
+            "16": "img/favicon-16.png",
+            "32": "img/favicon-32.png",
+            "48": "img/favicon-48.png",
+            "144": "img/favicon-144.png"
         }
     },
     "options_page": "options/options.html"
