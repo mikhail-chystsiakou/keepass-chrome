@@ -1,4 +1,5 @@
 
+save_credentials_confirmation();
 
 const LOGIN_INPUT_NAMES = ['login', 'userid', 'username', 'user name', 'user id', 'customer id', 'login id', 'email', 'email address', 'e-mail', 'e-mail address'];
 const PASSWORD_INPUT_NAMES = ['password', 'pass'];
@@ -11,11 +12,14 @@ var submit_button;
 var credentials_filled = false;
 
 setInterval(function (e) {
-    save_credentials_confirmation();
     console.log("find credentials");
     login_input = detect_login_input();
+    if (!login_input) {
+        return;
+    }
     console.log("login input: " + login_input.name);
-    if (login_input && old_login_input != login_input) {
+    if (old_login_input != login_input) {
+        save_credentials_confirmation();
         console.log("============LOGIN INPUT CHANGED============");
         old_login_input = login_input;
         password_input = detect_password_input();
@@ -28,43 +32,6 @@ setInterval(function (e) {
         load_credentials();
     }
 }, 2000);
-
-// // need to wait until SPA reload DOM :(..
-// this.setTimeout(function(e) {
-//     login_input = detect_login_input();
-//     if (login_input) {
-//         password_input = detect_password_input();
-//         submit_button = detect_submit_button();
-//         if (submit_button) {
-//             console.log("submit button found, adding handler");
-//             setup_submit_button_handler(submit_button);
-//         }
-//         load_credentials();
-//     }
-// }, 2000);
-
-// window.addEventListener("hashchange", function(e) {
-//     console.log("has changed");
-//     // need to wait until SPA reload DOM :(..
-//     this.setTimeout(function(e) {
-//         save_credentials_confirmation();
-
-//         login_input = detect_login_input();
-//         if (login_input) {
-//             password_input = detect_password_input();
-//             submit_button = detect_submit_button();
-//             if (submit_button) {
-//                 console.log("submit button found, adding handler");
-//                 setup_submit_button_handler(submit_button);
-//             }
-//             chrome.storage.sync.get(function(credentials) {
-//                 fill_credentials(credentials);
-//             });
-//         }        
-//     }, 2000);
-// });
-
-
 
 // + 1. get domain
 // + 2. load password for domain
@@ -133,13 +100,13 @@ function detect_login_input() {
     console.log("detecting login input");
     var login_input;
     var all_inputs = document.getElementsByTagName("input");
-    for (input in all_inputs) {
-        if (input.type == "password") {
-            continue;
-        }
-
-        if (all_inputs[input].name) {
-            for (i in LOGIN_INPUT_NAMES) {
+    for (i in LOGIN_INPUT_NAMES) {
+        for (input in all_inputs) {
+            if (input.type == "password") {
+                continue;
+            }
+    
+            if (all_inputs[input].name) {
                 if (all_inputs[input].name.toLowerCase() == LOGIN_INPUT_NAMES[i].toLowerCase()) {
                     login_input = all_inputs[input];
                     console.log("login input detected: " + login_input.id);
@@ -147,14 +114,12 @@ function detect_login_input() {
                 }
             }
         }
-    }
 
-    for (input in all_inputs) {
-        if (input.type == "password") {
-            continue;
-        }
-        if (all_inputs[input].placeholder) {
-            for (i in LOGIN_INPUT_NAMES) {
+        for (input in all_inputs) {
+            if (input.type == "password") {
+                continue;
+            }
+            if (all_inputs[input].placeholder) {
                 if (all_inputs[input].placeholder.toLowerCase() == LOGIN_INPUT_NAMES[i].toLowerCase()) {
                     login_input = all_inputs[input];
                     console.log("login input detected: " + login_input.id);
@@ -162,15 +127,12 @@ function detect_login_input() {
                 }
             }
         }
-        console.log("not placeholder");
-    }
 
-    for (input in all_inputs) {
-        if (input.type == "password") {
-            continue;
-        }
-        if (all_inputs[input].id) {
-            for (i in LOGIN_INPUT_NAMES) {
+        for (input in all_inputs) {
+            if (input.type == "password") {
+                continue;
+            }
+            if (all_inputs[input].id) {
                 if (all_inputs[input].id.toLowerCase() == LOGIN_INPUT_NAMES[i].toLowerCase()) {
                     login_input = all_inputs[input];
                     console.log("login input detected: " + login_input.id);
@@ -178,17 +140,13 @@ function detect_login_input() {
                 }
             }
         }
-        console.log("not id");
-    }
-
-    for (input in all_inputs) {
-        if (input.type == "password") {
-            continue;
-        }
-        if (all_inputs[input].labels) {
-            for (label in all_inputs[input].labels) {
-                if (label.innerText) {
-                    for (i in LOGIN_INPUT_NAMES) {
+        for (input in all_inputs) {
+            if (input.type == "password") {
+                continue;
+            }
+            if (all_inputs[input].labels) {
+                for (label in all_inputs[input].labels) {
+                    if (label.innerText) {
                         if (lable.innerText.toLowerCase() == LOGIN_INPUT_NAMES[i].toLowerCase()) {
                             login_input = all_inputs[input];
                             console.log("login input detected: " + login_input.id);
@@ -198,19 +156,7 @@ function detect_login_input() {
                 }
             }
         }
-        console.log("not label");
     }
-    // for (input in all_inputs) {
-    //     if (all_inputs[input].placeholder) {
-    //         for (i in LOGIN_INPUT_NAMES) {
-    //             if (all_inputs[input].placeholder.toLowerCase() == LOGIN_INPUT_NAMES[i].toLowerCase()) {
-    //                 login_input = all_inputs[input];
-    //                 console.log("login input detected");
-    //                 return login_input;
-    //             }
-    //         }
-    //     }
-    // }
     console.log("login field not found");
     return null;
 }
@@ -319,30 +265,28 @@ function detect_submit_button() {
     }
     var form = login_input.form;
     if (form) {
-        var form_elements = form.elements;
-        console.log("finding by submit inside same form: " + form);
-        for (e in form_elements) {
-            if (form_elements[e] && form_elements[e].type) {
-                if (form_elements[e].type == "submit") {
-                    submit_button = form_elements[e];
-                    console.log("submit button detected by type: " + submit_button.name);
-                    return submit_button;
+        for (i in SUBMIT_INPUT_NAMES) {
+            var form_elements = form.elements;
+            console.log("finding by submit inside same form: " + form);
+            for (e in form_elements) {
+                if (form_elements[e] && form_elements[e].type) {
+                    if (form_elements[e].type == "submit") {
+                        submit_button = form_elements[e];
+                        console.log("submit button detected by type: " + submit_button.name);
+                        return submit_button;
+                    }
                 }
             }
-        }
-        for (e in form_elements) {
-            if (form_elements[e].name) {
-                for (i in SUBMIT_INPUT_NAMES) {
+            for (e in form_elements) {
+                if (form_elements[e].name) {
                     if (form_elements[e].name.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
                         submit_button = form_elements[e];
                         console.log("submit button detected by name: " + submit_button.name);
                         return submit_button;
                     }
                 }
-            }
-
-            if (form_elements[e].id) {
-                for (i in SUBMIT_INPUT_NAMES) {
+    
+                if (form_elements[e].id) {
                     if (form_elements[e].id.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
                         submit_button = form_elements[e];
                         console.log("submit button detected by id: " + submit_button.id);
@@ -356,18 +300,17 @@ function detect_submit_button() {
 
 
     var all_buttons = document.getElementsByTagName("button");
-    for (button in all_buttons) {
-        if (all_buttons[button].name) {
-            for (i in SUBMIT_INPUT_NAMES) {
+
+    for (i in SUBMIT_INPUT_NAMES) {
+        for (button in all_buttons) {
+            if (all_buttons[button].name) {
                 if (all_buttons[button].name.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
                     submit_button = all_buttons[button];
                     console.log("submit button detected: " + submit_button.id);
                     return submit_button;
                 }
             }
-        }
-        if (all_buttons[button].id) {
-            for (i in SUBMIT_INPUT_NAMES) {
+            if (all_buttons[button].id) {
                 if (all_buttons[button].id.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
                     submit_button = all_buttons[button];
                     console.log("submit button detected: " + submit_button.id);
@@ -376,41 +319,7 @@ function detect_submit_button() {
             }
         }
     }
-
-    // var all_links = document.getElementsByTagName("a");
-    // for (button in all_links) {
-    //     if (all_links[button].name) {
-    //         for (i in SUBMIT_INPUT_NAMES) {
-    //             if (all_links[button].name.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
-    //                 submit_button = all_links[button];
-    //                 console.log("submit button detected: " + submit_button.id);
-    //                 return submit_button;
-    //             }
-    //         }
-    //     }
-    //     if (all_links[button].id) {
-    //         for (i in SUBMIT_INPUT_NAMES) {
-    //             if (all_links[button].id.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
-    //                 submit_button = all_links[button];
-    //                 console.log("submit button detected: " + submit_button.id);
-    //                 return submit_button;
-    //             }
-    //         }
-    //     }
-
-    //     if (all_links[button].classList) {
-    //         all_links[button].classList.forEach((clazz) => {
-    //                 // console.log("all_links[b].classList[c]: " + clazz);
-    //                 for (i in SUBMIT_INPUT_NAMES) {
-    //                     if (clazz.toLowerCase().includes(SUBMIT_INPUT_NAMES[i])) {
-    //                         submit_button = all_links[button];
-    //                         console.log("submit button detected: " + submit_button);
-    //                         return submit_button;
-    //                     }
-    //                 }
-    //         });          
-    //     }
-    // }
+    console.log("submit button not found");
 }
 
 function setup_submit_button_handler(submit_button) {
